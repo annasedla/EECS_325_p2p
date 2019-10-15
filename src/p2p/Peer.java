@@ -48,25 +48,41 @@ public class Peer {
     }
 
     /**
-     *
-     * @param port
+     * Port id setter
+     * @param port sets the port id
      */
     public void setPort(int port) {
         this.port = port;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getTimeToLive() {
         return timeToLive;
     }
 
+    /**
+     *
+     * @param timeToLive
+     */
     public void setTimeToLive(long timeToLive) {
         this.timeToLive = timeToLive;
     }
 
+    /**
+     *
+     * @return
+     */
     public InetAddress getIpAddress() {
         return ipAddress;
     }
 
+    /**
+     *
+     * @param ipAddress
+     */
     public void setIpAddress(InetAddress ipAddress) {
         this.ipAddress = ipAddress;
     }
