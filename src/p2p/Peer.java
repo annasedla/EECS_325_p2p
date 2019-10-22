@@ -16,7 +16,7 @@ public class Peer {
      * @param timeToLive time to live of the cache
      * @param ipAddress IP address of the porcess
      */
-    public Peer(Socket socket, int port, long timeToLive, InetAddress ipAddress){
+    public Peer(InetAddress ipAddress, int port, Socket socket, long timeToLive){
         this.socket = socket;
         this.port = port;
         this.timeToLive = timeToLive;

@@ -1,6 +1,8 @@
 package p2p;
 
 import java.io.BufferedReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,11 +15,38 @@ public class p2p {
 
     // global variables
     public static Peer myself; // IP address of me
-    public static ArrayList<Peer> myNeighbors = new ArrayList<Peer>(); // my neighbors IP
+    private static ArrayList<Peer> myNeighbors = new ArrayList<Peer>(); // my neighbors IP
 
-    public static void readFromInput(String line){
-        myself =
+    private static int queryPort;
+    private static int dataPort;
 
+    private static void readFromInput(String line){
+        List<String> ipList = Arrays.asList(line.split(","));
+        System.out.println(ipList);
+
+        if (ipList.size() > 2){
+            //set the data port
+            dataPort = Integer.parseInt(ipList.get(2));
+
+            //set the query port
+            queryPort = Integer.parseInt(ipList.get(1));
+
+            //set the me peer
+
+            try{
+                myself = new Peer(InetAddress.getByName(ipList.get(0)), dataPort, null, 0);
+            } catch (UnknownHostException e){
+                System.out.println("Cannot resolve the host for myself.");
+            }
+
+        } else {
+            try{
+                myNeighbors.add(new Peer(InetAddress.getByName(ipList.get(0)),
+                        Integer.parseInt(ipList.get(1)), null, 0));
+            } catch (UnknownHostException e) {
+                System.out.println("Cannot resolve the host for neighbors.");
+            }
+        }
     }
 
     public static void main(String[] args){
@@ -38,7 +67,8 @@ public class p2p {
 
             for (int i = 0; i < 3; i ++){
                 String l_neighbors = bf_neighbors.readLine();
-                System.out.println(l_neighbors);
+//                System.out.println(l_neighbors);
+                p2p.readFromInput(l_neighbors);
 
             }
 
