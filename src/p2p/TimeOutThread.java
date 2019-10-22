@@ -34,9 +34,10 @@ public class TimeOutThread extends p2p implements Runnable {
                         }
                     } else {
 
-                        // send a hb message to peers
+                        // send a heartbeat message to peers
 
-                        Query query = new Query("", p2p.connectedPeers.get(i), 'H', "");
+                        Query HBquery = new Query("", p2p.connectedPeers.get(i), 'H', "");
+                        p2p.sendMessage(HBquery);
 
                     }
                 }
@@ -44,15 +45,3 @@ public class TimeOutThread extends p2p implements Runnable {
         }
     }
 }
-
-//
-//                    else
-//                    {
-//                        Query q = new Query("", peerConns.get(i), 'H', "");
-//                        sendMsg(q);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
