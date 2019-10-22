@@ -6,6 +6,8 @@ public class Query {
     private String queryID;
     private char queryType;
     private String queryMessage;
+    private Peer sourceSocket;
+
 
     /**
      *
@@ -13,10 +15,11 @@ public class Query {
      * @param queryType
      * @param queryMessage
      */
-    public Query(String queryID, char queryType, String queryMessage){
+    public Query(String queryID, Peer socket, char queryType, String queryMessage){
         this.queryID = queryID;
         this.queryType = queryType;
         this.queryMessage = queryMessage;
+        this.sourceSocket = socket;
     }
 
     /**
@@ -65,5 +68,13 @@ public class Query {
      */
     public void setQueryMessage(String queryMessage) {
         this.queryMessage = queryMessage;
+    }
+
+    public Peer getSourceSocket() {
+        return sourceSocket;
+    }
+
+    public void setSourceSocket(Peer sourceSocket) {
+        this.sourceSocket = sourceSocket;
     }
 }
