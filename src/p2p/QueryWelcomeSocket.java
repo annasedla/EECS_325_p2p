@@ -9,7 +9,7 @@ public class QueryWelcomeSocket extends p2p implements Runnable{
     QueryWelcomeSocket(int port) throws IOException
         {
             socket = new ServerSocket(port);
-            //welcomes.add(socket); //TODO fix this
+            p2p.welcomeSockets.add(socket);
         }
 
     public void run()

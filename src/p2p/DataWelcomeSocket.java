@@ -9,7 +9,7 @@ class DataWelcomeSocket extends p2p implements Runnable {
 
     DataWelcomeSocket(int port) throws IOException{
         socket = new ServerSocket(port);
-        //welcomes.add(socket); //TODO fix this as well
+        p2p.welcomeSockets.add(socket);
     }
 
     public void run(){

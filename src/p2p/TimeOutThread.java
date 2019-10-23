@@ -5,9 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 // close sockets if a timeout occurs
 public class TimeOutThread extends p2p implements Runnable {
+
     //how often to check timers
     private static final int timerFreq = 60;
-    private Object syncObjectPeer;
+    private final Object syncObjectPeer;
 
     TimeOutThread(Object syncObjectPeer){
         this.syncObjectPeer = syncObjectPeer;
@@ -37,7 +38,7 @@ public class TimeOutThread extends p2p implements Runnable {
                         // send a heartbeat message to peers
 
                         Query HBquery = new Query("", p2p.connectedPeers.get(i), 'H', "");
-                        p2p.sendMessage(HBquery);
+                        p2p.sendMessage(HBquery); //TODO check that the output returns True
 
                     }
                 }
