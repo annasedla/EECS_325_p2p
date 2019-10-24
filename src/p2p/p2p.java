@@ -1,6 +1,7 @@
 package p2p;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -14,6 +15,7 @@ import java.util.*;
 
 //TODO organize 10 - 15 and fill up correctly
 //TODO put proper comments everywhere
+//TODO implement messages class to stay consistent
 
 public class p2p {
 
@@ -165,9 +167,60 @@ public class p2p {
         }
     }
 
-    static boolean sendMessage(Query query){
-        //TODO implement
-        return false;
+    static void sendMessage(Query query){
+
+        String message = query.toString() + "\n";
+        DataOutputStream dataOutputStream;
+
+        try{
+            dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
+        } catch (IOException e){
+            System.out.println("Could not create dataOutputStream.");
+            System.exit(1);
+        }
+
+        // if its a hearbeat message
+        if (query.getQueryType() == 'H'){
+            try{
+                dataOutputStream.writeBytes(message);
+                System.out.println("Heartbeat sent to" + query.getSourceSocket());
+
+            } catch (IOException e) {
+                System.out.println("Cannot write to socket.");
+                System.exit(1);
+            }
+        }
+
+        // if its a query message
+        else if(query.getQueryType() == 'Q') {
+            synchronized (syncObjectPeer){
+                for (int i = 0; i < connectedPeers.size(); i++){
+                    if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
+                        try{
+                            dataOutputStream.writeBytes(message);
+                            System.out.println("Query message sent to" + connectedPeers.get(i));
+
+                        } catch (IOException e) {
+                            System.out.println("Cannot write to socket.");
+                            System.exit(1);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // it is a response message
+        else {
+            try{
+                dataOutputStream.writeBytes(message);
+                System.out.println("Query message sent to" + query.getSourceSocket());
+
+            } catch (IOException e) {
+                System.out.println("Cannot write to socket.");
+                System.exit(1);
+            }
+        }
     }
 
     public static void main(String[] args){

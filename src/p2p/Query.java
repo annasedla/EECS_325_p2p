@@ -77,4 +77,16 @@ public class Query {
     public void setSourceSocket(Peer sourceSocket) {
         this.sourceSocket = sourceSocket;
     }
+
+    public String toString(){
+        if (queryType == ('Q')){
+            return "Q:(" + queryID + ");(" + queryMessage + ")";
+        }
+
+        else if (queryType == 'R'){
+            return "R:(" + queryID + ");" + queryMessage;
+        } else {
+            return "H";
+        }
+    }
 }
