@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -93,6 +94,33 @@ public class p2p {
         }
     }
 
+    private static void connect() {
+        for (int i = 0; i < myNeighbors.size(); i++) {
+            synchronized (syncObjectPeer) {
+
+                //check if the neighbor is already in connected peers
+                for (int j = 0; j < connectedPeers.size(); j++) {
+                    if (!myNeighbors.get(i).equals(connectedPeers.get(j))) {
+                        establishConnection(i); //TODO check the logic on this part
+                    }
+                }
+
+            }
+        }
+    }
+
+    private static void establishConnection(int peerIndex){
+        System.out.println("Attempting to connect to:" + myNeighbors.get(peerIndex).getIpAddress());
+
+        try{
+            new Thread(new QuerySocket(new Socket(myNeighbors.get(peerIndex).getIpAddress()),
+                    myNeighbors.get(peerIndex).getPort())).start();
+            System.out.println("Success! " +  myNeighbors.get(peerIndex).getIpAddress());
+        } catch (IOException e){
+            System.out.println("Failed! " + myNeighbors.get(peerIndex).getIpAddress()));
+        }
+    }
+
     private static void getObject(String fileName){
         Query query = new Query(UUID.randomUUID().toString(), null, 'Q', fileName);
         synchronized(syncObjectQuery)
@@ -170,7 +198,7 @@ public class p2p {
 
         while (true){
 
-            System.out.println("Enter a Command - Connect, Get");
+            System.out.println("Enter a Command - Connect, Get, Leave, Exit");
 
             // variable to keep track of user input
             String input;
@@ -178,7 +206,7 @@ public class p2p {
 
             if (input.equals("Connect")){
                 //establish connection to other servers
-                //TODO fill here
+                connect();
 
             } else if (input.substring(0, 3).equals("Get")){
                 String fileName = input.substring(4);
