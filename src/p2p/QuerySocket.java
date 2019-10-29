@@ -33,12 +33,67 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
+    void closeConnection(){
+        System.out.println("Socket closed, query socket: " + peerID);
+
+        for (int i = 0; i < p2p.connectedPeers.size(); i++){
+            if(p2p.connectedPeers.get(i).equals(peerID))
+            {
+                p2p.connectedPeers.remove(i);
+                break;
+            }
+        }
+    }
+
+    void handleQuery(){
+
+    }
+
+    void handleResponse(){
+
+    }
+
     public void run(){
-        boolean continueIteration = True;
+        boolean continueIteration = true;
 
         while (continueIteration){
             try{
 
+                String data = bf.readLine();
+                if (data == null){
+
+                    //handle close socket scenario
+                    closeConnection();
+                    continueIteration = false;
+
+                } else {
+
+                    // set time to live on the message
+                    peerID.setTimeToLive(System.currentTimeMillis() + socketTimeOut);
+
+                    if (data.charAt(0)=='H'){
+                        System.out.println("Heartbeat received from:" + peerID);
+                    } else if (data.charAt(0)=='Q'){
+                        handleQuery();
+                    } else if (data.charAt(0)=='R'){
+                        handleResponse();
+                    }
+                }
+            } catch (IOException e){
+                // need to exit the thread
+                continueIteration = false;
+
+                if (!socket.isClosed()){
+                    try{
+                        socket.close();
+                    } catch (IOException io){
+                        System.out.println("Error closing query socket");
+                    }
+                }
+
+                synchronized (syncObjectPeer){
+                    closeConnection();
+                }
             }
         }
     }
