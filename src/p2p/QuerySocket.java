@@ -45,11 +45,20 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
-    void handleQuery(){
+    void handleQuery(String data){
 
+        String fileName = "";
+        String queryID = "";
+
+        int i = 3;
+
+        while (data.charAt(i) != ')'){
+            fileName += data.charAt(i);
+            i++;
+        }
     }
 
-    void handleResponse(){
+    void handleResponse(String data){
 
     }
 
@@ -74,9 +83,9 @@ public class QuerySocket extends p2p implements Runnable {
                     if (data.charAt(0)=='H'){
                         System.out.println("Heartbeat received from:" + peerID);
                     } else if (data.charAt(0)=='Q'){
-                        handleQuery();
+                        handleQuery(data);
                     } else if (data.charAt(0)=='R'){
-                        handleResponse();
+                        handleResponse(data);
                     }
                 }
             } catch (IOException e){
