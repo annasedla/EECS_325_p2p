@@ -37,7 +37,7 @@ public class p2p {
     static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); //oops again
 
     private static void storeConnections(){
-        Path pathToNeighbors = Paths.get("src/p2p/10/config_neighbors.txt");
+        Path pathToNeighbors = Paths.get("src/p2p/10/config_neighbors.txt"); //TODO have to change per server
         Path pathToSharing = Paths.get("src/p2p/10/config_sharing.txt");
 
         try {
@@ -107,7 +107,6 @@ public class p2p {
                         establishConnection(i); //TODO check the logic on this part
                     }
                 }
-
             }
         }
     }
@@ -208,7 +207,6 @@ public class p2p {
                     }
                 }
             }
-
         }
 
         // it is a response message

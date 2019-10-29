@@ -34,29 +34,12 @@ public class QuerySocket extends p2p implements Runnable {
     }
 
     public void run(){
+        boolean continueIteration = True;
 
+        while (continueIteration){
+            try{
+
+            }
+        }
     }
-
-
-    // 	public QuerySocket(Socket socket)
-    // 	{
-    // 		synchronized(syncObjP)
-    // 		{
-    // 			this.socket = socket;
-    // 			InetAddress address = socket.getInetAddress();
-    // 			int port = socket.getPort();
-    // 			id = new PeerId(address, port, socket, System.currentTimeMillis() + TO);
-    // 			try
-    // 			{
-    // 				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    // 			}
-    // 			catch(IOException e)
-    // 			{
-    // 				System.out.println("Error with datastreams");
-    // 				System.exit(1);
-    // 			}
-
-    // 			peerConns.add(id);
-    // 		}
-    // 	}
 }

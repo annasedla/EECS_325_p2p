@@ -15,7 +15,7 @@ class DataWelcomeSocket extends p2p implements Runnable {
     public void run(){
         while(!socket.isClosed()){
             try{
-                Thread thread = new Thread(new DataSocket(socket.accept(), null, true)); // TODO add import statement
+                Thread thread = new Thread(new DataSocket(socket.accept(), null, true));
                 thread.start();
             } catch(SocketException e) {
                 System.out.println("Exiting socket error");
