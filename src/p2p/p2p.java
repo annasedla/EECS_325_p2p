@@ -16,6 +16,7 @@ import java.util.*;
 //TODO organize 10 - 15 and fill up correctly
 //TODO put proper comments everywhere
 //TODO implement messages class to stay consistent
+//TODO make class with all constatnts
 
 public class p2p {
 
@@ -29,8 +30,8 @@ public class p2p {
     private static ArrayList<Query> queriesList = new ArrayList<Query>();
 
     //thread synchronization objects
-    private static final Object syncObjectPeer = new Object();
-    private static final Object syncObjectQuery = new Object();
+    static final Object syncObjectPeer = new Object();
+    static final Object syncObjectQuery = new Object();
 
     static ArrayList<Peer> connectedPeers = new ArrayList<Peer>(); //oops public static but need to keep track of peers
     static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); //oops again
@@ -182,7 +183,7 @@ public class p2p {
         // if its a hearbeat message
         if (query.getQueryType() == 'H'){
             try{
-                dataOutputStream.writeBytes(message);
+                dataOutputStream.writeBytes(message); //TODO fix this and make it consistent with everything else
                 System.out.println("Heartbeat sent to" + query.getSourceSocket());
 
             } catch (IOException e) {
