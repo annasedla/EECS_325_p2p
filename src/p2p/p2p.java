@@ -26,8 +26,8 @@ public class p2p {
     private static int queryPort;
     private static int dataPort;
 
-    private static ArrayList<String> listOfFiles = new ArrayList<>(); //TODO rename this so it matches
-    private static ArrayList<Query> queriesList = new ArrayList<Query>();
+    static ArrayList<String> listOfFiles = new ArrayList<>(); //TODO rename this so it matches
+    static ArrayList<Query> queriesList = new ArrayList<Query>();
 
     //thread synchronization objects
     static final Object syncObjectPeer = new Object();
@@ -115,11 +115,10 @@ public class p2p {
         System.out.println("Attempting to connect to:" + myNeighbors.get(peerIndex).getIpAddress());
 
         try{
-            new Thread(new QuerySocket(new Socket(myNeighbors.get(peerIndex).getIpAddress()),
-                    myNeighbors.get(peerIndex).getPort())).start();
+            new Thread(new QuerySocket(new Socket(myNeighbors.get(peerIndex).getIpAddress(), myNeighbors.get(peerIndex).getPort()))).start();
             System.out.println("Success! " +  myNeighbors.get(peerIndex).getIpAddress());
         } catch (IOException e){
-            System.out.println("Failed! " + myNeighbors.get(peerIndex).getIpAddress()));
+            System.out.println("Failed! " + myNeighbors.get(peerIndex).getIpAddress());
         }
     }
 
@@ -170,7 +169,7 @@ public class p2p {
     static void sendMessage(Query query){
 
         String message = query.toString() + "\n";
-        DataOutputStream dataOutputStream;
+        DataOutputStream dataOutputStream = null;
 
         try{
             dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));

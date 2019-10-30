@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class QuerySocket extends p2p implements Runnable {
 
@@ -49,6 +50,9 @@ public class QuerySocket extends p2p implements Runnable {
 
         String fileName = "";
         String queryID = "";
+        String message = "";
+        boolean uniqueQuery = true;
+        boolean hasFile = false;
 
         int i = 3;
 
@@ -56,10 +60,117 @@ public class QuerySocket extends p2p implements Runnable {
             fileName += data.charAt(i);
             i++;
         }
+
+        i = i+3;
+
+        while(data.charAt(i) != ')'){
+            message += data.charAt(i);
+            i++;
+        }
+
+        Query query = new Query(queryID, peerID, 'Q', message);
+
+        System.out.println("Received the query");
+
+        synchronized (syncObjectQuery){
+            for (int j = 0; j < queriesList.size(); j++){
+                if (query.equals(queriesList.get(j))){
+                    uniqueQuery = false;
+                }
+            }
+        }
+
+        if (uniqueQuery){
+            synchronized (syncObjectQuery){
+                queriesList.add(query);
+            }
+
+            for(int j = 0; j < listOfFiles.size(); j++) {
+                if(listOfFiles.get(j).equals(message)) {
+                    hasFile = true;
+                }
+            }
+
+            if (hasFile){
+                System.out.println("Found the requested file on this peer.");
+                fileName = message;
+                String addr = myself.toString();
+
+                Query r = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
+                p2p.sendMessage(r);
+            } else {
+                // forward the request to other peers
+                System.out.println("File not found on this peer.");
+                p2p.sendMessage(query);
+            }
+        }
     }
 
     void handleResponse(String data){
+        String fileName = "";
+        String queryID = "";
+        String message = "";
+        int i = 3;
 
+        while (data.charAt(i) != ')'){
+            fileName += data.charAt(i);
+            i++;
+        }
+        i = i +2;
+        message = data.substring(i);
+
+        System.out.println("Response received pt1.");
+
+        synchronized (syncObjectQuery){
+            for (int j = 0; j< queriesList.size(); j++){
+
+                if(queriesList.get(j).equals(queryID)) {
+                    Query currentQuery = queriesList.get(j);
+
+                    if (currentQuery.getSourceSocket() == null) {
+                        System.out.println("Response received pt2.");
+
+                        boolean onPort = false;
+                        String ip = "";
+                        String portS = "";
+
+                        for (int k = 1; message.charAt(k) != ')'; k++) {
+                            if (message.charAt(k) == ':') {
+                                onPort = true;
+                            } else if (onPort) {
+                                portS += message.charAt(k);
+                            } else {
+                                ip += message.charAt(k);
+                            }
+                        }
+
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(ip);
+                            int port = Integer.parseInt(portS);
+                            fileName = currentQuery.getQueryMessage();
+
+                            try {
+                                new Thread(new DataSocket(new Socket(inetAddress, port), fileName, false)).start();
+                            } catch (IOException e){
+                                System.out.println("CANNOT CREATE DATA SOCKET.");
+                                System.exit(1);
+                            }
+                        } catch(UnknownHostException e) {
+                            System.out.println("CANNOT FIND INET ADDRESS.");
+                            System.exit(1);
+                        }
+
+                    } else {
+                        Query request = new Query(queryID, currentQuery.getSourceSocket(), 'R', message);
+                        System.out.println("Response forwarded.");
+                        p2p.sendMessage(request);
+                    }
+
+                    queriesList.remove(j);
+                    j = queriesList.size();
+                }
+            }
+        }
     }
 
     public void run(){

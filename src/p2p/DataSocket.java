@@ -37,7 +37,7 @@ public class DataSocket extends p2p implements Runnable {
             }
 
             //find the correct file path based on file name
-            Path path = Paths.get("sent/" + fileName);
+            Path path = Paths.get("shared/" + fileName);
 
             InputStream fileInput = Files.newInputStream(path);
             OutputStream outputStream = socket.getOutputStream();
