@@ -31,7 +31,7 @@ public class TimeOutThread extends p2p implements Runnable {
                             p2p.connectedPeers.remove(i);
                             i--;
                         } catch (IOException e){
-                            System.out.println("Cannot close socket, error");
+                            System.out.println("Cannot close socket in TimeOutThread, error.");
                         }
                     } else {
 

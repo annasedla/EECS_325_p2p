@@ -18,9 +18,9 @@ class DataWelcomeSocket extends p2p implements Runnable {
                 Thread thread = new Thread(new DataSocket(socket.accept(), null, true));
                 thread.start();
             } catch(SocketException e) {
-                System.out.println("Exiting socket error");
+                System.out.println("Exiting, data welcome socket error.");
             } catch(IOException e) {
-                System.out.println("Issue setting up socket");
+                System.out.println("Issue setting up data welcome socket.");
             }
         }
 

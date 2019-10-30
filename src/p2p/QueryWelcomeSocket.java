@@ -14,15 +14,15 @@ public class QueryWelcomeSocket extends p2p implements Runnable{
 
     public void run()
     {
-        System.out.println("Run method executed by child Thread");
+        System.out.println("Run method executed by child thread of query welcome socket.");
         while(!socket.isClosed()){
             try{
                 Thread thread = new Thread(new QuerySocket(socket.accept()));
                 thread.start();
             } catch(SocketException e) {
-                    System.out.println("Exiting socket error");
+                    System.out.println("Exiting query welcome socket error.");
             } catch(IOException e) {
-                    System.out.println("Issue setting up socket");
+                    System.out.println("Issue setting up query welcome socket.");
             }
         }
     }

@@ -37,8 +37,8 @@ public class p2p {
     static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); //oops again
 
     private static void storeConnections(){
-        Path pathToNeighbors = Paths.get("src/p2p/10/config_neighbors.txt"); //TODO have to change per server
-        Path pathToSharing = Paths.get("src/p2p/10/config_sharing.txt");
+        Path pathToNeighbors = Paths.get("p2p/10/config_neighbors.txt"); //TODO have to change per server
+        Path pathToSharing = Paths.get("p2p/10/config_sharing.txt");
 
         try {
             BufferedReader bf_neighbors = Files.newBufferedReader(pathToNeighbors, Charset.defaultCharset());
@@ -99,14 +99,22 @@ public class p2p {
 
     private static void connect() {
         for (int i = 0; i < myNeighbors.size(); i++) {
-            synchronized (syncObjectPeer) {
 
+            boolean establishConnection = true;
+
+            synchronized (syncObjectPeer) {
+                System.out.println(connectedPeers.size());
                 //check if the neighbor is already in connected peers
                 for (int j = 0; j < connectedPeers.size(); j++) {
-                    if (!myNeighbors.get(i).equals(connectedPeers.get(j))) {
-                        establishConnection(i); //TODO check the logic on this part
+                    if (myNeighbors.get(i).equals(connectedPeers.get(j))) {
+                        System.out.println("HERE HERE");
+                        establishConnection = false;
+
                     }
                 }
+            }
+            if (establishConnection){
+                establishConnection(i);
             }
         }
     }
