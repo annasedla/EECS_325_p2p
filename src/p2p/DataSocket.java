@@ -57,7 +57,7 @@ public class DataSocket extends p2p implements Runnable {
 
             socket.close();
             fileInput.close();
-            System.out.println("Finished transfering file to peer");
+            System.out.println("Finished transferring file to peer");
 
         } catch (IOException e){
             System.out.println("Error receiving file");

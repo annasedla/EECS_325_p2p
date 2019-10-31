@@ -15,7 +15,7 @@ import java.util.*;
 
 //TODO organize 10 - 15 and fill up correctly
 //TODO put proper comments everywhere
-//TODO implement messages class to stay consistent
+//TODO implement messages class to stay consistent and fix the messages
 //TODO make class with all constatnts
 
 public class p2p {
@@ -103,11 +103,9 @@ public class p2p {
             boolean establishConnection = true;
 
             synchronized (syncObjectPeer) {
-                System.out.println(connectedPeers.size());
                 //check if the neighbor is already in connected peers
                 for (int j = 0; j < connectedPeers.size(); j++) {
                     if (myNeighbors.get(i).equals(connectedPeers.get(j))) {
-                        System.out.println("HERE HERE");
                         establishConnection = false;
 
                     }

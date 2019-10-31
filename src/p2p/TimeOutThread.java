@@ -38,6 +38,7 @@ public class TimeOutThread extends p2p implements Runnable {
                         // send a heartbeat message to peers
 
                         Query HBquery = new Query("", p2p.connectedPeers.get(i), 'H', "");
+                        System.out.println("Sending hearbeat message to pears.");
                         p2p.sendMessage(HBquery); //TODO check that the output returns True
 
                     }
