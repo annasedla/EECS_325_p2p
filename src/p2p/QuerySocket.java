@@ -31,6 +31,7 @@ public class QuerySocket extends p2p implements Runnable {
                 System.out.println("Error setting up input stream reader for query socket.");
                 System.exit(1);
             }
+            p2p.connectedPeers.add(peerID);
         }
     }
 
