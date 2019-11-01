@@ -178,6 +178,7 @@ public class p2p {
 
         // if its a hearbeat message
         if (query.getQueryType() == 'H'){
+            System.out.println("HEARTBEAT");
             try{
                 DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message); //TODO fix this and make it consistent with everything else
@@ -191,6 +192,7 @@ public class p2p {
 
         // if its a query message
         else if(query.getQueryType() == 'Q') {
+            System.out.println("QUERY");
             synchronized (syncObjectPeer){
                 for (int i = 0; i < connectedPeers.size(); i++){
                     if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
@@ -211,6 +213,7 @@ public class p2p {
         // it is a response message
         else {
             try{
+                System.out.println("RESPONSE");
                 DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message);
                 System.out.println("Query message sent to" + query.getSourceSocket());
