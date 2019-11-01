@@ -194,8 +194,10 @@ public class p2p {
         else if(query.getQueryType() == 'Q') {
             System.out.println("QUERY");
             synchronized (syncObjectPeer){
+                System.out.println("Peers size:" + connectedPeers.size());
                 for (int i = 0; i < connectedPeers.size(); i++){
                     if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
+                        System.out.println("Inside if statement");
                         try{
                             DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                             dataOutputStream.writeBytes(message);
