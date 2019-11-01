@@ -199,7 +199,7 @@ public class p2p {
                     if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
                         System.out.println("Inside if statement");
                         try{
-                            DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
+                            DataOutputStream dataOutputStream = new DataOutputStream(connectedPeers.get(i).getSocket().getOutputStream());
                             dataOutputStream.writeBytes(message);
                             System.out.println("Query message sent to" + connectedPeers.get(i));
 
@@ -211,6 +211,14 @@ public class p2p {
                 }
             }
         }
+
+//        QUERY
+//        Peers size:4
+//        Inside if statement
+//        Exception in thread "main" java.lang.NullPointerException
+//        at p2p.p2p.sendMessage(p2p.java:202)
+//        at p2p.p2p.getObject(p2p.java:137)
+//        at p2p.p2p.main(p2p.java:270)
 
         // it is a response message
         else {
