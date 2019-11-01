@@ -175,18 +175,11 @@ public class p2p {
     static void sendMessage(Query query){
 
         String message = query.toString() + "\n";
-        DataOutputStream dataOutputStream = null;
-
-        try{
-            dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
-        } catch (IOException e){
-            System.out.println("Could not create dataOutputStream.");
-            System.exit(1);
-        }
 
         // if its a hearbeat message
         if (query.getQueryType() == 'H'){
             try{
+                DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message); //TODO fix this and make it consistent with everything else
                 System.out.println("Heartbeat sent to" + query.getSourceSocket());
 
@@ -202,6 +195,7 @@ public class p2p {
                 for (int i = 0; i < connectedPeers.size(); i++){
                     if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
                         try{
+                            DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                             dataOutputStream.writeBytes(message);
                             System.out.println("Query message sent to" + connectedPeers.get(i));
 
@@ -217,6 +211,7 @@ public class p2p {
         // it is a response message
         else {
             try{
+                DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message);
                 System.out.println("Query message sent to" + query.getSourceSocket());
 
