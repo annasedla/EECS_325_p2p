@@ -98,11 +98,11 @@ public class QuerySocket extends p2p implements Runnable {
                 String addr = myself.toString();
 
                 Query r = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
-                p2p.sendMessage(r);
+                p2p.sendQuery(r);
             } else {
                 // forward the request to other peers
                 System.out.println("File not found on this peer.");
-                p2p.sendMessage(query);
+                p2p.sendQuery(query);
             }
         }
     }
@@ -164,7 +164,7 @@ public class QuerySocket extends p2p implements Runnable {
                     } else {
                         Query request = new Query(queryID, currentQuery.getSourceSocket(), 'R', message);
                         System.out.println("Response forwarded.");
-                        p2p.sendMessage(request);
+                        p2p.sendQuery(request);
                     }
 
                     queriesList.remove(j);

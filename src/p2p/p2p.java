@@ -134,7 +134,7 @@ public class p2p {
         {
             queriesList.add(query);
         }
-        sendMessage(query); //TODO check the output
+        sendQuery(query); //TODO check the output
     }
 
     private static void leave(){
@@ -172,7 +172,7 @@ public class p2p {
         }
     }
 
-    static void sendMessage(Query query){
+    static void sendQuery(Query query){
 
         String message = query.toString() + "\n";
 
