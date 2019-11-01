@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeOutThread extends p2p implements Runnable {
 
     //how often to check timers
-    private static final int timerFreq = 60;
+    private static final int timerFreq = 30;
     private final Object syncObjectPeer;
 
     TimeOutThread(Object syncObjectPeer){
@@ -38,7 +38,7 @@ public class TimeOutThread extends p2p implements Runnable {
                         // send a heartbeat message to peers
 
                         Query HBquery = new Query("", p2p.connectedPeers.get(i), 'H', "");
-                        System.out.println("Sending hearbeat message to pears.");
+                        System.out.println("Sending heartbeat message to pears.");
                         p2p.sendMessage(HBquery); //TODO check that the output returns True
 
                     }
