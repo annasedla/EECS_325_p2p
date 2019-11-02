@@ -13,7 +13,8 @@ public class QuerySocket extends p2p implements Runnable {
     private Socket socket;
     private BufferedReader bf;
     private Peer peerID;
-    private static final long socketTimeOut = 300000;
+
+    private static final long socketTimeOut = 300000; // constant for socket time out
 
     QuerySocket(Socket socket){
         synchronized (p2p.syncObjectPeer){
@@ -22,8 +23,6 @@ public class QuerySocket extends p2p implements Runnable {
             // to create a new ID
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
-
-            System.out.println("SOCKET PORT:" + port);
 
             peerID = new Peer(inetAddress, port, socket, System.currentTimeMillis() + socketTimeOut);
 
@@ -70,11 +69,11 @@ public class QuerySocket extends p2p implements Runnable {
 
         Query query = new Query(queryID, peerID, 'Q', message);
 
-        System.out.println("Received the query");
+        System.out.println("Query received.");
 
         synchronized (syncObjectQuery){
-            for (int j = 0; j < queriesList.size(); j++){
-                if (query.equals(queriesList.get(j))){
+            for (int j = 0; j < listOfQueries.size(); j++){
+                if (query.equals(listOfQueries.get(j))){
                     uniqueQuery = false;
                     System.out.println("Not a unique query, ignore.");
                 }
@@ -83,32 +82,28 @@ public class QuerySocket extends p2p implements Runnable {
 
         if (uniqueQuery){
             synchronized (syncObjectQuery){
-                queriesList.add(query);
+                listOfQueries.add(query);
             }
-
-            System.out.println(listOfFiles);
 
             for(int j = 0; j < listOfFiles.size(); j++) {
                 if(listOfFiles.get(j).equals(message)) {
-                    System.out.println("YAAAAS");
                     hasFile = true;
                 }
             }
 
             if (hasFile){
+
+                // File found on this peer
                 System.out.println("Found the requested file on this peer.");
                 fileName = message;
                 String addr = myself.toString();
 
-                System.out.println("MY IP: " + myself);
-
-                System.out.println("Query ID" + queryID);
-
-                Query r = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
-                p2p.sendQuery(r);
+                Query response = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
+                p2p.sendQuery(response);
             } else {
-                // forward the request to other peers
-                System.out.println("File not found on this peer.");
+
+                // Forward the request to other peers
+                System.out.println("File not found on this peer, lets forward the request.");
                 p2p.sendQuery(query);
             }
         }
@@ -125,30 +120,23 @@ public class QuerySocket extends p2p implements Runnable {
         }
         i += 2;
 
-        System.out.println("Data: " + data);
         String message = data.substring(i);
 
-        System.out.println("Response received.");
+        System.out.println("Query response received.");
 
         synchronized (syncObjectQuery){
-            for (int j = 0; j< queriesList.size(); j++){
+            for (int j = 0; j< listOfQueries.size(); j++){
 
-                System.out.println(queriesList.toString());
-                System.out.println(queryID);
-                System.out.println("HERE");
-                if(queriesList.get(j).equals(queryID)) {
-                    System.out.println("HERE HERE");
+                if(listOfQueries.get(j).equals(queryID)) {
 
-                    Query currentQuery = queriesList.get(j);
+                    Query currentQuery = listOfQueries.get(j);
 
                     if (currentQuery.getSourceSocket() == null) {
-                        System.out.println("Response received from this peer.");
+                        System.out.println("Query response received from this peer.");
 
                         boolean onPort = false;
                         String ip = "";
                         String portS = "";
-
-                        System.out.println("message: " + message);
 
                         for(int k = 1; message.charAt(k) != ')'; k++) {
                             if(message.charAt(k) == ':') {
@@ -162,7 +150,6 @@ public class QuerySocket extends p2p implements Runnable {
 
                         try {
 
-                            System.out.println("IP" + ip);
                             InetAddress inetAddress = InetAddress.getByName(ip);
                             int port = Integer.parseInt(portS);
                             fileName = currentQuery.getQueryMessage();
@@ -170,22 +157,22 @@ public class QuerySocket extends p2p implements Runnable {
                             try {
                                 new Thread(new DataSocket(new Socket(inetAddress, port), fileName, false)).start();
                             } catch (IOException e){
-                                System.out.println("CANNOT CREATE DATA SOCKET.");
+                                System.out.println("Error creating data socket in QuerySocket.");
                                 System.exit(1);
                             }
                         } catch(UnknownHostException e) {
-                            System.out.println("CANNOT FIND INET ADDRESS.");
+                            System.out.println("Error creating inet address in QuerySocket.");
                             System.exit(1);
                         }
 
                     } else {
                         Query request = new Query(queryID, currentQuery.getSourceSocket(), 'R', message);
-                        System.out.println("Response forwarded.");
+                        System.out.println("Query response forwarded.");
                         p2p.sendQuery(request);
                     }
 
-                    queriesList.remove(j);
-                    j = queriesList.size();
+                    listOfQueries.remove(j);
+                    j = listOfQueries.size();
                 }
             }
         }
@@ -210,13 +197,11 @@ public class QuerySocket extends p2p implements Runnable {
                     peerID.setTimeToLive(System.currentTimeMillis() + socketTimeOut);
 
                     if (data.charAt(0)=='H'){
-                        System.out.println("Heartbeat received from:" + peerID);
+                        System.out.println("Heartbeat received from neighbor: " + peerID);
                     } else if (data.charAt(0)=='Q'){
                         handleQuery(data);
-//                        continueIteration = false; //TODO take out
                     } else if (data.charAt(0)=='R'){
                         handleResponse(data);
-//                        continueIteration = false; //TODO take out
                     }
                 }
             } catch (IOException e){
@@ -227,7 +212,7 @@ public class QuerySocket extends p2p implements Runnable {
                     try{
                         socket.close();
                     } catch (IOException io){
-                        System.out.println("Error closing query socket");
+                        System.out.println("Error closing query socket.");
                     }
                 }
 

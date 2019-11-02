@@ -14,28 +14,30 @@ import java.nio.file.Paths;
 import java.util.*;
 
 //TODO organize 10 - 15 and fill up correctly
-//TODO put proper comments everywhere
-//TODO implement messages class to stay consistent and fix the messages
-//TODO make class with all constatnts
 
 public class p2p {
 
-    // global variables to set up connections
-    public static Peer myself; // IP address of me
+    // global fields to set up sockets
+    public static Peer myself; // my IP
     private static ArrayList<Peer> myNeighbors = new ArrayList<Peer>(); // my neighbors IP
     private static int queryPort;
     private static int dataPort;
 
-    static ArrayList<String> listOfFiles = new ArrayList<>(); //TODO rename this so it matches
-    static ArrayList<Query> queriesList = new ArrayList<Query>();
+    // package accessible fields to keep track of the files on this peer as well as the queries
+    static ArrayList<String> listOfFiles = new ArrayList<>();
+    static ArrayList<Query> listOfQueries = new ArrayList<Query>(); // more on this in the README
 
-    //thread synchronization objects
+    // package accessible objects for thread synchronization
     static final Object syncObjectPeer = new Object();
     static final Object syncObjectQuery = new Object();
 
-    static ArrayList<Peer> connectedPeers = new ArrayList<Peer>(); //oops public static but need to keep track of peers
-    static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); //oops again
+    // package accessible fields to keep track of peers connected to this peer and the welcome sockets
+    static ArrayList<Peer> connectedPeers = new ArrayList<Peer>();
+    static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); // one for queries and one for data
 
+    /**
+     * Method initially run to store
+     */
     private static void storeConnections(){
         Path pathToNeighbors = Paths.get("p2p/10/config_neighbors.txt");
         Path pathToSharing = Paths.get("p2p/10/config_sharing.txt");
@@ -48,7 +50,6 @@ public class p2p {
 
             for (int i = 0; i < 3; i ++){
                 String l_neighbors = bf_neighbors.readLine();
-//                System.out.println(l_neighbors);
                 p2p.readFromInput(l_neighbors);
             }
 
@@ -70,7 +71,6 @@ public class p2p {
 
     private static void readFromInput(String line){
         List<String> ipList = Arrays.asList(line.split(","));
-        //System.out.println(ipList);
 
         if (ipList.size() > 2){
             //set the data port
@@ -84,7 +84,7 @@ public class p2p {
             try{
                 myself = new Peer(InetAddress.getByName(ipList.get(0)), dataPort, null, 0);
             } catch (UnknownHostException e){
-                System.out.println("Cannot resolve the host for myself.");
+                System.out.println("Cannot resolve the host for my IP address.");
             }
 
         } else {
@@ -92,7 +92,7 @@ public class p2p {
                 myNeighbors.add(new Peer(InetAddress.getByName(ipList.get(0)),
                         Integer.parseInt(ipList.get(1)), null, 0));
             } catch (UnknownHostException e) {
-                System.out.println("Cannot resolve the host for neighbors.");
+                System.out.println("Cannot resolve the host for my neighbors.");
             }
         }
     }
@@ -118,13 +118,13 @@ public class p2p {
     }
 
     private static void establishConnection(int peerIndex){
-        System.out.println("Attempting to connect to:" + myNeighbors.get(peerIndex).getIpAddress());
+        System.out.println("Attempting to connect to this peer: " + myNeighbors.get(peerIndex).getIpAddress());
 
         try{
             new Thread(new QuerySocket(new Socket(myNeighbors.get(peerIndex).getIpAddress(), myNeighbors.get(peerIndex).getPort()))).start();
-            System.out.println("Success! " +  myNeighbors.get(peerIndex).getIpAddress());
+            System.out.println("Successfully connected to: " +  myNeighbors.get(peerIndex).getIpAddress());
         } catch (IOException e){
-            System.out.println("Failed! " + myNeighbors.get(peerIndex).getIpAddress());
+            System.out.println("Failed connecting to: " + myNeighbors.get(peerIndex).getIpAddress());
         }
     }
 
@@ -132,9 +132,9 @@ public class p2p {
         Query query = new Query(UUID.randomUUID().toString(), null, 'Q', fileName);
         synchronized(syncObjectQuery)
         {
-            queriesList.add(query);
+            listOfQueries.add(query);
         }
-        sendQuery(query); //TODO check the output
+        sendQuery(query);
     }
 
     private static void leave(){
@@ -146,7 +146,7 @@ public class p2p {
                 }
             }
         } catch (IOException e){
-            System.out.println("Cannot close socket.");
+            System.out.println("Cannot close socket while leaving.");
             System.exit(1);
         }
     }
@@ -167,7 +167,7 @@ public class p2p {
             }
 
         } catch (IOException e){
-            System.out.println("Cannot close sockets");
+            System.out.println("Cannot close sockets while exiting.");
             System.exit(1); // exit the system
         }
     }
@@ -180,11 +180,11 @@ public class p2p {
         if (query.getQueryType() == 'H'){
             try{
                 DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
-                dataOutputStream.writeBytes(message); //TODO fix this and make it consistent with everything else
-                System.out.println("Heartbeat sent to" + query.getSourceSocket());
+                dataOutputStream.writeBytes(message);
+                System.out.println("Heartbeat sent to neighbor: " + query.getSourceSocket());
 
             } catch (IOException e) {
-                System.out.println("Cannot write to socket.");
+                System.out.println("Cannot write to socket to send a query.");
                 System.exit(1);
             }
         }
@@ -193,14 +193,14 @@ public class p2p {
         else if(query.getQueryType() == 'Q') {
             synchronized (syncObjectPeer){
                 for (int i = 0; i < connectedPeers.size(); i++){
-                    if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
+                    if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){
                         try{
                             DataOutputStream dataOutputStream = new DataOutputStream(connectedPeers.get(i).getSocket().getOutputStream());
                             dataOutputStream.writeBytes(message);
-                            System.out.println("Query message sent to" + connectedPeers.get(i));
+                            System.out.println("Query message sent to: " + connectedPeers.get(i));
 
                         } catch (IOException e) {
-                            System.out.println("Cannot write to socket.");
+                            System.out.println("Cannot write to socket to send a query message.");
                             System.exit(1);
                         }
                     }
@@ -208,24 +208,15 @@ public class p2p {
             }
         }
 
-//        QUERY
-//        Peers size:4
-//        Inside if statement
-//        Exception in thread "main" java.lang.NullPointerException
-//        at p2p.p2p.sendMessage(p2p.java:202)
-//        at p2p.p2p.getObject(p2p.java:137)
-//        at p2p.p2p.main(p2p.java:270)
-
         // it is a response message
         else {
             try{
-                System.out.println("RESPONSE");
                 DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message);
-                System.out.println("Query message sent to" + query.getSourceSocket());
+                System.out.println("Query response message sent to" + query.getSourceSocket());
 
             } catch (IOException e) {
-                System.out.println("Cannot write to socket.");
+                System.out.println("Cannot write to socket to send a response.");
                 System.exit(1);
             }
         }
@@ -233,10 +224,9 @@ public class p2p {
 
     public static void main(String[] args){
 
-//        System.out.println(System.getProperty("user.dir"));
-        System.out.println("Running");
+        System.out.println("Anna's P2P network starting...");
 
-        p2p.storeConnections(); // store all variables
+        p2p.storeConnections(); // store all variables, port, IP
 
         try
         {
@@ -246,7 +236,6 @@ public class p2p {
         catch(IOException e)
         {
             System.out.println("Error happened while trying to start welcome sockets for data and query.");
-            System.out.println("run lsof -i :" + queryPort + "and kill that process.");
         }
 
         new Thread(new TimeOutThread(syncObjectPeer)).start(); //Time handling thread

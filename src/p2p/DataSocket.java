@@ -8,104 +8,112 @@ import java.nio.file.Paths;
 
 public class DataSocket extends p2p implements Runnable {
 
-    //global variables
+    //global fields
     private Socket socket;
     private String message;
     private String fileName;
     private boolean isServer;
-    //buffer size for files
-    public static final int bufferSize = 100000;
 
+    private static final int bufferSize = 100000; // constant buffer file size for file transfer
+
+    /**
+     * Constructor for DataSocket
+     * @param socket Socket object
+     * @param fileName Name of the file to be embedded within the message
+     * @param isServer boolean to determine if its server to complete file transfer or file request
+     */
     DataSocket(Socket socket, String fileName, boolean isServer){
         this.socket = socket;
         this.message = "T:(" + fileName + ")\n";
         this.fileName = fileName;
         this.isServer = isServer;
-
-        System.out.println("DATA SOCKET socket: " + socket);
-        System.out.println("DATA SOCKET fileName: " + fileName);
     }
 
+    /**
+     * Method to transfer files between peers
+     */
     private void transferFilePeer(){
 
         try{
 
             BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            StringBuilder sb = new StringBuilder();
             String message = bf.readLine();
 
-            System.out.println("MESSAGE: " + message);
-            String fileName = "";
             int i = 3;
 
+            //get the fileName from the input stream
             while (message.charAt(i) != ')'){
-                fileName += message.charAt(i);
+                sb.append(message.charAt(i));
+//                fileName = fileName + message.charAt(i); TODO delete and check
                 i++;
             }
 
-            //find the correct file path based on file name
-            Path path = Paths.get("p2p/shared/" + fileName);
-            System.out.println("THIS IS THE PATH: " + path);
+            String fileName = sb.toString();
 
-            InputStream fileInput = Files.newInputStream(path);
+            Path path = Paths.get("p2p/shared/" + fileName);
+
+            InputStream inputStream = Files.newInputStream(path);
             OutputStream outputStream = socket.getOutputStream();
 
             byte[] buffer = new byte[bufferSize];
             boolean readingFromBuffer = true;
 
+            // read from the buffer and then write to output stream
             while (readingFromBuffer){
-                int streamSize = fileInput.read(buffer);
+                int streamSize = inputStream.read(buffer);
                 if(streamSize == - 1) {
-                    //should send all data to buffer, iterate again, then do this.
                     readingFromBuffer = false;
                 } else {
                     outputStream.write(buffer, 0, streamSize);
                 }
             }
 
+            //close the Socket and InputStream
             socket.close();
-            fileInput.close();
-            System.out.println("Finished transferring file to peer");
+            inputStream.close();
+            System.out.println("Completed file transmission to the requesting peer.");
 
         } catch (IOException e){
-            System.out.println("Error receiving file");
+            System.out.println("Error receiving file in data socket.");
             System.exit(1);
         }
-
-
-        System.out.println("Beginning to transfer file.");
     }
 
+    /**
+     * Method for file requests
+     */
     private void requestFilePeer(){
         Path path = Paths.get("p2p/obtained/" + fileName);
-        System.out.println("PATH" + path);
 
         try {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             InputStream inputStream = socket.getInputStream();
-            OutputStream outputFile = Files.newOutputStream(path);
+            OutputStream outputStream = Files.newOutputStream(path);
             byte[] buffer = new byte[bufferSize];
             boolean readingFromBuffer = true;
 
-            System.out.println("Requesting file.");
+            System.out.println("Requesting a file transfer from another peer.");
 
             dataOutputStream.writeBytes(message);
 
+            // read from the buffer and then write to the directory
             while(readingFromBuffer) {
                 int readSize = inputStream.read(buffer);
                 if(readSize == -1) {
                     readingFromBuffer = false;
                 } else {
-                    outputFile.write(buffer, 0, readSize);
+                    outputStream.write(buffer, 0, readSize);
                 }
             }
 
-            //close everything
+            //close the Socket and OutputStream
             socket.close();
-            outputFile.close();
+            outputStream.close();
+            System.out.println("Finished receiving file from another peer.");
 
-            System.out.println("Finished receiving.");
         } catch(IOException e) {
-            System.out.println("Error requesting file.");
+            System.out.println("Error requesting file in data socket.");
             System.exit(1);
         }
     }

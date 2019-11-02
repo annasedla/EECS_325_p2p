@@ -26,7 +26,8 @@ public class TimeOutThread extends p2p implements Runnable {
                         try{
 
                             // if connection has timed out
-                            System.out.println("Connection to " + p2p.connectedPeers.get(i) + " has timed out");
+                            System.out.println("Closing the connection to " + p2p.connectedPeers.get(i) +
+                                    " because the heartbeat did not arrive for a timeout value of " + timerFreq);
                             p2p.connectedPeers.get(i).getSocket().close();
                             p2p.connectedPeers.remove(i);
                             i--;
@@ -36,10 +37,8 @@ public class TimeOutThread extends p2p implements Runnable {
                     } else {
 
                         // send a heartbeat message to peers
-
                         Query HBquery = new Query("", p2p.connectedPeers.get(i), 'H', "");
-                        System.out.println("Sending heartbeat message to pears.");
-                        p2p.sendQuery(HBquery); //TODO check that the output returns True
+                        p2p.sendQuery(HBquery);
 
                     }
                 }
