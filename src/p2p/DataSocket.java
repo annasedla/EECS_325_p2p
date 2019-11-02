@@ -24,11 +24,12 @@ public class DataSocket extends p2p implements Runnable {
     }
 
     private void transferFilePeer(){
-        System.out.println("TRANSFER FILE CALLED");
 
         try{
             BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = bf.readLine();
+
+            System.out.println("MESSAGE: " + message);
             String fileName = "";
             int i = 3;
 
