@@ -98,6 +98,8 @@ public class QuerySocket extends p2p implements Runnable {
                 fileName = message;
                 String addr = myself.toString();
 
+                System.out.println("MY IP: " + myself);
+
                 System.out.println("Query ID" + queryID);
 
                 Query r = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
