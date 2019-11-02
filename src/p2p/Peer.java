@@ -86,4 +86,8 @@ public class Peer {
     public void setIpAddress(InetAddress ipAddress) {
         this.ipAddress = ipAddress;
     }
+
+    public String toString() {
+        return ipAddress.getHostAddress() + ":" + port;
+    }
 }
