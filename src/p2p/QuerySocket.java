@@ -77,6 +77,7 @@ public class QuerySocket extends p2p implements Runnable {
             for (int j = 0; j < queriesList.size(); j++){
                 if (query.equals(queriesList.get(j))){
                     uniqueQuery = false;
+                    System.out.println("Not a unique query, ignore.");
                 }
             }
         }
@@ -128,9 +129,9 @@ public class QuerySocket extends p2p implements Runnable {
         synchronized (syncObjectQuery){
             for (int j = 0; j< queriesList.size(); j++){
 
-                System.out.println("HERE HERE");
-
                 if(queriesList.get(j).equals(queryID)) {
+                    System.out.println("HERE HERE");
+
                     Query currentQuery = queriesList.get(j);
 
                     if (currentQuery.getSourceSocket() == null) {
