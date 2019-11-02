@@ -24,6 +24,7 @@ public class DataSocket extends p2p implements Runnable {
     }
 
     private void transferFilePeer(){
+        System.out.println("TRANSFER FILE CALLED");
 
         try{
             BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
