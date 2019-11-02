@@ -37,7 +37,7 @@ public class DataSocket extends p2p implements Runnable {
             }
 
             //find the correct file path based on file name
-            Path path = Paths.get("shared/" + fileName);
+            Path path = Paths.get("p2p/shared/" + fileName);
 
             InputStream fileInput = Files.newInputStream(path);
             OutputStream outputStream = socket.getOutputStream();
@@ -69,7 +69,7 @@ public class DataSocket extends p2p implements Runnable {
     }
 
     private void requestFilePeer(){
-        Path path = Paths.get("obtained/" + fileName);
+        Path path = Paths.get("p2p/obtained/" + fileName);
 
         try {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
