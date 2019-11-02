@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeOutThread extends p2p implements Runnable {
 
     //how often to check timers
-    private static final int timerFreq = 30;
+    private static final int timerFreq = 90;
     private final Object syncObjectPeer;
 
     TimeOutThread(Object syncObjectPeer){

@@ -129,6 +129,9 @@ public class QuerySocket extends p2p implements Runnable {
         synchronized (syncObjectQuery){
             for (int j = 0; j< queriesList.size(); j++){
 
+                System.out.println(queriesList.toString());
+                System.out.println(queryID);
+
                 if(queriesList.get(j).equals(queryID)) {
                     System.out.println("HERE HERE");
 

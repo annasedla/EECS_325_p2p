@@ -98,4 +98,15 @@ public class Query {
             return false;
         }
     }
+
+    public boolean equals(Query other)
+    {
+        if (queryID.equals(other.getQueryID())) {
+            return true;
+        }
+
+        else {
+            return false;
+        }
+    }
 }
