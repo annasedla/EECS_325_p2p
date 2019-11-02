@@ -58,7 +58,7 @@ public class QuerySocket extends p2p implements Runnable {
         int i = 3;
 
         while (data.charAt(i) != ')'){
-            fileName += data.charAt(i);
+            queryID += data.charAt(i);
             i++;
         }
 
@@ -131,7 +131,7 @@ public class QuerySocket extends p2p implements Runnable {
 
                 System.out.println(queriesList.toString());
                 System.out.println(queryID);
-
+                System.out.println("HERE");
                 if(queriesList.get(j).equals(queryID)) {
                     System.out.println("HERE HERE");
 
