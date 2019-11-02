@@ -144,7 +144,7 @@ public class QuerySocket extends p2p implements Runnable {
                         String ip = "";
                         String portS = "";
 
-                        System.out.println("message");
+                        System.out.println("message: " + message);
 
                         for(int k = 1; message.charAt(k) != ')'; k++) {
                             if(message.charAt(k) == ':') {
