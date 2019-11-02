@@ -23,6 +23,8 @@ public class QuerySocket extends p2p implements Runnable {
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
 
+            System.out.println("SOCKET PORT:" + port);
+
             peerID = new Peer(inetAddress, port, socket, System.currentTimeMillis() + socketTimeOut);
 
             try{
