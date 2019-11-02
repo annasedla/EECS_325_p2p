@@ -37,7 +37,7 @@ public class p2p {
     static ArrayList<ServerSocket> welcomeSockets = new ArrayList<ServerSocket>(); //oops again
 
     private static void storeConnections(){
-        Path pathToNeighbors = Paths.get("p2p/10/config_neighbors.txt"); //TODO have to change per server
+        Path pathToNeighbors = Paths.get("p2p/10/config_neighbors.txt");
         Path pathToSharing = Paths.get("p2p/10/config_sharing.txt");
 
         try {
@@ -178,7 +178,6 @@ public class p2p {
 
         // if its a hearbeat message
         if (query.getQueryType() == 'H'){
-            System.out.println("HEARTBEAT");
             try{
                 DataOutputStream dataOutputStream = new DataOutputStream((query.getSourceSocket().getSocket().getOutputStream()));
                 dataOutputStream.writeBytes(message); //TODO fix this and make it consistent with everything else
@@ -192,12 +191,9 @@ public class p2p {
 
         // if its a query message
         else if(query.getQueryType() == 'Q') {
-            System.out.println("QUERY");
             synchronized (syncObjectPeer){
-                System.out.println("Peers size:" + connectedPeers.size());
                 for (int i = 0; i < connectedPeers.size(); i++){
                     if (query.getSourceSocket() == null || !query.getSourceSocket().equals(connectedPeers.get(i))){ //TODO what
-                        System.out.println("Inside if statement");
                         try{
                             DataOutputStream dataOutputStream = new DataOutputStream(connectedPeers.get(i).getSocket().getOutputStream());
                             dataOutputStream.writeBytes(message);
