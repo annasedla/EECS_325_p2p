@@ -86,8 +86,11 @@ public class QuerySocket extends p2p implements Runnable {
                 queriesList.add(query);
             }
 
+            System.out.println(listOfFiles);
+
             for(int j = 0; j < listOfFiles.size(); j++) {
                 if(listOfFiles.get(j).equals(message)) {
+                    System.out.println("YAAAAS");
                     hasFile = true;
                 }
             }
@@ -198,10 +201,10 @@ public class QuerySocket extends p2p implements Runnable {
                         System.out.println("Heartbeat received from:" + peerID);
                     } else if (data.charAt(0)=='Q'){
                         handleQuery(data);
-                        continueIteration = false; //TODO take out
+//                        continueIteration = false; //TODO take out
                     } else if (data.charAt(0)=='R'){
                         handleResponse(data);
-                        continueIteration = false; //TODO take out
+//                        continueIteration = false; //TODO take out
                     }
                 }
             } catch (IOException e){
