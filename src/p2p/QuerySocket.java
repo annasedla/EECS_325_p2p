@@ -16,11 +16,15 @@ public class QuerySocket extends p2p implements Runnable {
 
     private static final long socketTimeOut = 300000; // constant for socket time out
 
+    /**
+     * Constructor for query socket
+     * @param socket socket to create a new Peer
+     */
     QuerySocket(Socket socket){
         synchronized (p2p.syncObjectPeer){
             this.socket = socket;
 
-            // to create a new ID
+            // create a new peer ID
             InetAddress inetAddress = socket.getInetAddress();
             int port = socket.getPort();
 
@@ -36,7 +40,10 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
-    void closeConnection(){
+    /**
+     * Close connection of this peer
+     */
+    private void closeConnection(){
         System.out.println("Socket closed, query socket: " + peerID);
 
         for (int i = 0; i < p2p.connectedPeers.size(); i++){
@@ -48,9 +55,13 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
-    void handleQuery(String data){
 
-        String fileName = "";
+    /**
+     * Method to handle query
+     * @param data Input data
+     */
+    private void handleQuery(String data){
+
         String queryID = "";
         String message = "";
         boolean uniqueQuery = true;
@@ -58,20 +69,27 @@ public class QuerySocket extends p2p implements Runnable {
         int i;
 
         for(i = 3; data.charAt(i) != ')'; i++) {
+
+            //fill the query ID
             queryID += data.charAt(i);
         }
 
         i += 3;
 
         for(;data.charAt(i) != ')'; i++) {
+
+            // fill the message
             message += data.charAt(i);
         }
 
+        // create a new query with said message
         Query query = new Query(queryID, peerID, 'Q', message);
 
         System.out.println("Query received.");
 
         synchronized (syncObjectQuery){
+
+            // check if the query is unique and discard if its repeated
             for (int j = 0; j < listOfQueries.size(); j++){
                 if (query.equals(listOfQueries.get(j))){
                     uniqueQuery = false;
@@ -86,6 +104,8 @@ public class QuerySocket extends p2p implements Runnable {
             }
 
             for(int j = 0; j < listOfFiles.size(); j++) {
+
+                // check if the file we are searching for is in the list of this peer's files
                 if(listOfFiles.get(j).equals(message)) {
                     hasFile = true;
                 }
@@ -95,10 +115,10 @@ public class QuerySocket extends p2p implements Runnable {
 
                 // File found on this peer
                 System.out.println("Found the requested file on this peer.");
-                fileName = message;
                 String addr = myself.toString();
 
-                Query response = new Query(queryID, peerID, 'R', "(" + addr + ");(" + fileName + ")");
+                // Make a query to retrieve the file
+                Query response = new Query(queryID, peerID, 'R', "(" + addr + ");(" + message + ")");
                 p2p.sendQuery(response);
             } else {
 
@@ -109,8 +129,11 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
-    void handleResponse(String data){
-        String fileName = "";
+    /**
+     * Handle the response
+     * @param data Input data
+     */
+    private void handleResponse(String data){
         String queryID = "";
         int i = 3;
 
@@ -134,27 +157,30 @@ public class QuerySocket extends p2p implements Runnable {
                     if (currentQuery.getSourceSocket() == null) {
                         System.out.println("Query response received from this peer.");
 
+                        // break down the message for information to make a DataSocket thread
                         boolean onPort = false;
-                        String ip = "";
-                        String portS = "";
+                        String ipAddress = "";
+                        String portString = "";
 
                         for(int k = 1; message.charAt(k) != ')'; k++) {
                             if(message.charAt(k) == ':') {
                                 onPort = true;
                             } else if(onPort) {
-                                portS += message.charAt(k);
+                                portString += message.charAt(k);
                             } else {
-                                ip += message.charAt(k);
+                                ipAddress += message.charAt(k);
                             }
                         }
 
                         try {
 
-                            InetAddress inetAddress = InetAddress.getByName(ip);
-                            int port = Integer.parseInt(portS);
-                            fileName = currentQuery.getQueryMessage();
+                            InetAddress inetAddress = InetAddress.getByName(ipAddress);
+                            int port = Integer.parseInt(portString);
+                            String fileName = currentQuery.getQueryMessage();
 
                             try {
+
+                                // make a data socket thread to retrive file
                                 new Thread(new DataSocket(new Socket(inetAddress, port), fileName, false)).start();
                             } catch (IOException e){
                                 System.out.println("Error creating data socket in QuerySocket.");
@@ -171,6 +197,7 @@ public class QuerySocket extends p2p implements Runnable {
                         p2p.sendQuery(request);
                     }
 
+                    // remove the query from the list of queries since its processed
                     listOfQueries.remove(j);
                     j = listOfQueries.size();
                 }
@@ -178,22 +205,25 @@ public class QuerySocket extends p2p implements Runnable {
         }
     }
 
+    /**
+     * Run method for this thread
+     */
     public void run(){
         boolean continueIteration = true;
 
+        // keep iterating until we hit an error or data is null
         while (continueIteration){
             try{
-
                 String data = bf.readLine();
-                if (data == null){
 
-                    //handle close socket scenario
+                // if the socket is null, close the connection
+                if (data == null){
                     closeConnection();
                     continueIteration = false;
 
                 } else {
 
-                    // set time to live on the message
+                    // Time to live for peer
                     peerID.setTimeToLive(System.currentTimeMillis() + socketTimeOut);
 
                     if (data.charAt(0)=='H'){
@@ -205,7 +235,7 @@ public class QuerySocket extends p2p implements Runnable {
                     }
                 }
             } catch (IOException e){
-                // need to exit the thread
+                //Exit the thread if an error occurs
                 continueIteration = false;
 
                 if (!socket.isClosed()){
