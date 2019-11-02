@@ -29,6 +29,7 @@ public class DataSocket extends p2p implements Runnable {
     private void transferFilePeer(){
 
         try{
+
             BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = bf.readLine();
 
@@ -76,6 +77,7 @@ public class DataSocket extends p2p implements Runnable {
 
     private void requestFilePeer(){
         Path path = Paths.get("p2p/obtained/" + fileName);
+        System.out.println("PATH" + path);
 
         try {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
