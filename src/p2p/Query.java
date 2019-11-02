@@ -89,4 +89,13 @@ public class Query {
             return "H";
         }
     }
+
+    public boolean equals(String id)
+    {
+        if(queryID.equals(id)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

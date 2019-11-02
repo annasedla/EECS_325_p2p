@@ -120,16 +120,18 @@ public class QuerySocket extends p2p implements Runnable {
         i = i +2;
         message = data.substring(i);
 
-        System.out.println("Response received pt1.");
+        System.out.println("Response received.");
 
         synchronized (syncObjectQuery){
             for (int j = 0; j< queriesList.size(); j++){
+
+                System.out.println("HERE HERE");
 
                 if(queriesList.get(j).equals(queryID)) {
                     Query currentQuery = queriesList.get(j);
 
                     if (currentQuery.getSourceSocket() == null) {
-                        System.out.println("Response received pt2.");
+                        System.out.println("Response received from this peer.");
 
                         boolean onPort = false;
                         String ip = "";
@@ -196,8 +198,10 @@ public class QuerySocket extends p2p implements Runnable {
                         System.out.println("Heartbeat received from:" + peerID);
                     } else if (data.charAt(0)=='Q'){
                         handleQuery(data);
+                        continueIteration = false; //TODO take out
                     } else if (data.charAt(0)=='R'){
                         handleResponse(data);
+                        continueIteration = false; //TODO take out
                     }
                 }
             } catch (IOException e){
