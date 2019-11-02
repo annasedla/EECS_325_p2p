@@ -21,6 +21,9 @@ public class DataSocket extends p2p implements Runnable {
         this.message = "T:(" + fileName + ")\n";
         this.fileName = fileName;
         this.isServer = isServer;
+
+        System.out.println("DATA SOCKET socket: " + socket);
+        System.out.println("DATA SOCKET fileName: " + fileName);
     }
 
     private void transferFilePeer(){
