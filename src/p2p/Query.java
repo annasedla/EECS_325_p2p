@@ -2,18 +2,17 @@ package p2p;
 
 public class Query {
 
-    // Private variables
+    // Private fields
     private String queryID;
     private char queryType;
     private String queryMessage;
     private Peer sourceSocket;
 
-
     /**
-     *
-     * @param queryID
-     * @param queryType
-     * @param queryMessage
+     * Class constructor
+     * @param queryID ID of the query
+     * @param queryType type of query, R, Q or H
+     * @param queryMessage message - file we are searching for
      */
     public Query(String queryID, Peer socket, char queryType, String queryMessage){
         this.queryID = queryID;
@@ -23,61 +22,73 @@ public class Query {
     }
 
     /**
-     *
-     * @return
+     * Query ID setter
+     * @return id of this query
      */
-    public String getQueryID() {
+    private String getQueryID() {
         return queryID;
     }
 
     /**
-     *
-     * @param queryID
+     * Query ID getter
+     * @param queryID id of this query
      */
-    public void setQueryID(String queryID) {
+    void setQueryID(String queryID) {
         this.queryID = queryID;
     }
 
     /**
-     *
-     * @return
+     * Query type setter
+     * @return type of this query, Q, R or H
      */
-    public char getQueryType() {
+    char getQueryType() {
         return queryType;
     }
 
     /**
-     *
-     * @param queryType
+     * Query type getter
+     * @param queryType Q, R or H
      */
-    public void setQueryType(char queryType) {
+    void setQueryType(char queryType) {
         this.queryType = queryType;
     }
 
     /**
-     *
-     * @return
+     * Query message getter
+     * @return name of the file
      */
-    public String getQueryMessage() {
+    String getQueryMessage() {
         return queryMessage;
     }
 
     /**
-     *
-     * @param queryMessage
+     * Query message setter
+     * @param queryMessage name of the file
      */
     public void setQueryMessage(String queryMessage) {
         this.queryMessage = queryMessage;
     }
 
-    public Peer getSourceSocket() {
+    /**
+     * Get source socket of this query
+     * @return source socket of query
+     */
+    Peer getSourceSocket() {
         return sourceSocket;
     }
 
-    public void setSourceSocket(Peer sourceSocket) {
+    /**
+     * Source socket setter
+     * @param sourceSocket source socket of query
+     */
+    void setSourceSocket(Peer sourceSocket) {
         this.sourceSocket = sourceSocket;
     }
 
+    /**
+     * Method that creates query in a string format
+     * @return String of the query
+     */
     public String toString(){
         if (queryType == ('Q')){
             return "Q:(" + queryID + ");(" + queryMessage + ")";
@@ -90,23 +101,34 @@ public class Query {
         }
     }
 
-    public boolean equals(String id)
-    {
-        if(queryID.equals(id)) {
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * Compare two queries based on their ids
+     * @param id query id
+     * @return whether they match
+     */
+    public boolean equals(String id) {
+        return (queryID.equals(id));
+//        if(queryID.equals(id)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
-    public boolean equals(Query other)
-    {
-        if (queryID.equals(other.getQueryID())) {
-            return true;
-        }
-
-        else {
-            return false;
-        }
+    /**
+     * Compare two queries based on the objects themselves
+     * @param query other query
+     * @return whether they match
+     */
+    public boolean equals(Query query) {
+        return (queryID.equals(query.getQueryID()));
+//        if (queryID.equals(other.getQueryID())) {
+//            return true;
+//        }
+//
+//        else {
+//            return false;
+//        }
+        //TODO
     }
 }

@@ -3,7 +3,7 @@ import java.net.*;
 
 public class Peer {
 
-    // Private variables
+    //private global fields
     private Socket socket;
     private int port;
     private long timeToLive;
@@ -14,7 +14,7 @@ public class Peer {
      * @param socket socket of peer
      * @param port port used by peer
      * @param timeToLive time to live of the cache
-     * @param ipAddress IP address of the porcess
+     * @param ipAddress IP address of the process
      */
     public Peer(InetAddress ipAddress, int port, Socket socket, long timeToLive){
         this.socket = socket;
@@ -27,7 +27,7 @@ public class Peer {
      * Socket getter
      * @return the socket object
      */
-    public Socket getSocket() {
+    Socket getSocket() {
         return socket;
     }
 
@@ -35,7 +35,7 @@ public class Peer {
      * Socket setter
      * @param socket sets the socket
      */
-    public void setSocket(Socket socket) {
+    void setSocket(Socket socket) {
         this.socket = socket;
     }
 
@@ -43,7 +43,7 @@ public class Peer {
      * Port id getter
      * @return port id of this peer
      */
-    public int getPort() {
+    int getPort() {
         return port;
     }
 
@@ -51,42 +51,46 @@ public class Peer {
      * Port id setter
      * @param port sets the port id
      */
-    public void setPort(int port) {
+    void setPort(int port) {
         this.port = port;
     }
 
     /**
-     *
-     * @return
+     * TTL getter
+     * @return TTL of this Peer
      */
-    public long getTimeToLive() {
+    long getTimeToLive() {
         return timeToLive;
     }
 
     /**
-     *
-     * @param timeToLive
+     * TTL setter
+     * @param timeToLive TTL before socket timeout
      */
-    public void setTimeToLive(long timeToLive) {
+    void setTimeToLive(long timeToLive) {
         this.timeToLive = timeToLive;
     }
 
     /**
-     *
-     * @return
+     * IP address getter
+     * @return IP address
      */
-    public InetAddress getIpAddress() {
+    InetAddress getIpAddress() {
         return ipAddress;
     }
 
     /**
-     *
-     * @param ipAddress
+     *IP address setter
+     * @param ipAddress IP address of this peer
      */
-    public void setIpAddress(InetAddress ipAddress) {
+    void setIpAddress(InetAddress ipAddress) {
         this.ipAddress = ipAddress;
     }
 
+    /**
+     * Converts the Peer to string with the port and IP
+     * @return port and IP seperated by a : for queries
+     */
     public String toString() {
         return ipAddress.getHostAddress() + ":" + port;
     }
