@@ -116,15 +116,14 @@ public class QuerySocket extends p2p implements Runnable {
     void handleResponse(String data){
         String fileName = "";
         String queryID = "";
-        String message = "";
         int i = 3;
 
         while (data.charAt(i) != ')'){
             queryID += data.charAt(i);
             i++;
         }
-        i = i +2;
-        message = data.substring(i);
+        i += 2;
+        String message = data.substring(i);
 
         System.out.println("Response received.");
 
@@ -157,6 +156,8 @@ public class QuerySocket extends p2p implements Runnable {
                         }
 
                         try {
+
+                            System.out.println(ip);
                             InetAddress inetAddress = InetAddress.getByName(ip);
                             int port = Integer.parseInt(portS);
                             fileName = currentQuery.getQueryMessage();
