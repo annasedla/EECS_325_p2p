@@ -82,6 +82,7 @@ public class p2p {
             //set the me peer
 
             try{
+                System.out.println("Whats my ip" + ipList.get(0));
                 myself = new Peer(InetAddress.getByName(ipList.get(0)), dataPort, null, 0);
             } catch (UnknownHostException e){
                 System.out.println("Cannot resolve the host for myself.");

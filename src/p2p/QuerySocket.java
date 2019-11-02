@@ -54,19 +54,16 @@ public class QuerySocket extends p2p implements Runnable {
         String message = "";
         boolean uniqueQuery = true;
         boolean hasFile = false;
+        int i;
 
-        int i = 3;
-
-        while (data.charAt(i) != ')'){
+        for(i = 3; data.charAt(i) != ')'; i++) {
             queryID += data.charAt(i);
-            i++;
         }
 
-        i = i+3;
+        i += 3;
 
-        while(data.charAt(i) != ')'){
+        for(;data.charAt(i) != ')'; i++) {
             message += data.charAt(i);
-            i++;
         }
 
         Query query = new Query(queryID, peerID, 'Q', message);
@@ -123,6 +120,8 @@ public class QuerySocket extends p2p implements Runnable {
             i++;
         }
         i += 2;
+
+        System.out.println("Data: " + data);
         String message = data.substring(i);
 
         System.out.println("Response received.");
@@ -145,10 +144,12 @@ public class QuerySocket extends p2p implements Runnable {
                         String ip = "";
                         String portS = "";
 
-                        for (int k = 1; message.charAt(k) != ')'; k++) {
-                            if (message.charAt(k) == ':') {
+                        System.out.println("message");
+
+                        for(int k = 1; message.charAt(k) != ')'; k++) {
+                            if(message.charAt(k) == ':') {
                                 onPort = true;
-                            } else if (onPort) {
+                            } else if(onPort) {
                                 portS += message.charAt(k);
                             } else {
                                 ip += message.charAt(k);
@@ -157,7 +158,7 @@ public class QuerySocket extends p2p implements Runnable {
 
                         try {
 
-                            System.out.println(ip);
+                            System.out.println("IP" + ip);
                             InetAddress inetAddress = InetAddress.getByName(ip);
                             int port = Integer.parseInt(portS);
                             fileName = currentQuery.getQueryMessage();
