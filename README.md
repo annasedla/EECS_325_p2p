@@ -11,3 +11,5 @@ of this peer and the rest of are the neighbors. I hope that is not an issue it w
 Regarding Note 2 in the protocols, I handle duplicate queries by storing all queries in a queries list and
 before processing it determining if it is unique with respect to all the other queries in that list. If it is unique,
 I then process it otherwise, it is discarded.
+
+The files are in shared_10 to shared _15 however if you look on the servers it just says shared.
