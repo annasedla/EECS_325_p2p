@@ -108,11 +108,6 @@ public class Query {
      */
     public boolean equals(String id) {
         return (queryID.equals(id));
-//        if(queryID.equals(id)) {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     /**
@@ -122,13 +117,5 @@ public class Query {
      */
     public boolean equals(Query query) {
         return (queryID.equals(query.getQueryID()));
-//        if (queryID.equals(other.getQueryID())) {
-//            return true;
-//        }
-//
-//        else {
-//            return false;
-//        }
-        //TODO
     }
 }

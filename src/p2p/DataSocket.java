@@ -45,7 +45,6 @@ public class DataSocket extends p2p implements Runnable {
             //get the fileName from the input stream
             while (message.charAt(i) != ')'){
                 sb.append(message.charAt(i));
-//                fileName = fileName + message.charAt(i); TODO delete and check
                 i++;
             }
 
